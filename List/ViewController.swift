@@ -12,7 +12,7 @@ import Foundation
 
 class ViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
-    var people = [String]()
+    var people = [NSManagedObject]()
 
     @IBAction func addName(sender: AnyObject) {
         var alert = UIAlertController(title: "New name",
@@ -59,7 +59,7 @@ class ViewController: UIViewController, UITableViewDataSource {
         let fetchedResults = managedContext.executeFetchRequest(fetchRequest, error: &error) as [NSManagedObject]?
         
         if let results = fetchedResults {
-            let people = results
+            people = results
         } else {
             println("Could not fetch error \(error), \(error!.userInfo)")
         }
@@ -84,14 +84,13 @@ class ViewController: UIViewController, UITableViewDataSource {
             println("Could not save \(error), \(error?.userInfo)")
             
         }
-        //let currentName = person.valueForKey("Name")
-        //5
-        //people.append(currentName)
-        
-        people.append(person.valueForKey("Name"))
-    }
 
-     
+        let currentName: String = person.valueForKey("Name") as String
+        
+        people.append(person)
+
+        println("appended \(currentName) to people")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -114,26 +113,26 @@ class ViewController: UIViewController, UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell") as UITableViewCell
         
-        //According to tutorial, this should be cell.textLabel!.text, but that causes an error
-        cell.textLabel.text = people[indexPath.row]
+//        //According to tutorial, this should be cell.textLabel!.text, but that causes an error
+//        cell.textLabel.text = people[indexPath.row]
         
         
-        //let person = people[indexPath.row]
-        // - this block of code was not in the tutorial
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        let entity = NSEntityDescription.entityForName("Person", inManagedObjectContext: managedContext)
-        let person = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-    
-        
-        //This was in tutorial but causes an error; creating a variable and
-        //assigning it the value and giving that to cell.textLabel causes a different error
-        //Now it no longer causes an error for some reason
+        let person = people[indexPath.row]
+//        // - this block of code was not in the tutorial
+//        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+//        let managedContext = appDelegate.managedObjectContext!
+//        let entity = NSEntityDescription.entityForName("Person", inManagedObjectContext: managedContext)
+//        let person = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+//    
+//        
+//        //This was in tutorial but causes an error; creating a variable and
+//        //assigning it the value and giving that to cell.textLabel causes a different error
+//        //Now it no longer causes an error for some reason
         cell.textLabel.text = person.valueForKey("Name") as String?
-        
-        
-        var value = person.valueForKey("Name")
-        println("value: \(value), ")
+//
+//        
+//        var value = person.valueForKey("Name")
+//        println("value: \(value), ")
         
         return cell
     }
